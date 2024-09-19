@@ -1,0 +1,418 @@
+<html><head><base href="https://revolution.anarchist.code/editor/" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LibreCode: L'Éditeur Anarchiste Ultime 2.0</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Courier New', monospace;
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    overflow: hidden;
+  }
+  .container {
+    display: flex;
+    height: 100%;
+  }
+  #editor {
+    flex: 1;
+    height: 100%;
+    font-size: 16px;
+  }
+  #sidebar {
+    width: 300px;
+    background-color: #2a2a2a;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+  h1 {
+    color: #ff4f4f;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #ff4f4f;
+    color: #1a1a1a;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+  }
+  button:hover {
+    background-color: #ff7f7f;
+    transform: scale(1.05);
+  }
+  button:active {
+    transform: scale(0.95);
+  }
+  #output {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #2a2a2a;
+    border: 1px solid #ff4f4f;
+    max-height: 150px;
+    overflow-y: auto;
+  }
+  #themeSelector, #languageSelector {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+    border: 1px solid #ff4f4f;
+  }
+  #collaborative {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #3a3a3a;
+    border: 1px solid #ff4f4f;
+  }
+  #userList {
+    list-style-type: none;
+    padding: 0;
+  }
+  #userList li {
+    margin-bottom: 5px;
+  }
+  #chatBox {
+    height: 100px;
+    overflow-y: auto;
+    border: 1px solid #ff4f4f;
+    padding: 5px;
+    margin-bottom: 5px;
+  }
+  #chatInput {
+    width: calc(100% - 10px);
+    padding: 5px;
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+    border: 1px solid #ff4f4f;
+  }
+  #manifestoGenerator {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #3a3a3a;
+    border: 1px solid #ff4f4f;
+  }
+  #memeGenerator {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #3a3a3a;
+    border: 1px solid #ff4f4f;
+  }
+  #memeCanvas {
+    width: 100%;
+    margin-top: 10px;
+  }
+  #decentralizedStorage {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #3a3a3a;
+    border: 1px solid #ff4f4f;
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ipfs-core/dist/index.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <div id="sidebar">
+    <h1>LibreCode 2.0</h1>
+    <button id="run">Exécuter</button>
+    <button id="save">Sauvegarder</button>
+    <button id="share">Partager</button>
+    <button id="encrypt">Crypter</button>
+    <button id="decompile">Décompiler</button>
+    <button id="obfuscate">Obfusquer</button>
+    <select id="themeSelector">
+      <option value="monokai">Monokai</option>
+      <option value="github">GitHub</option>
+      <option value="solarized_dark">Solarized Dark</option>
+      <option value="terminal">Terminal</option>
+      <option value="anarchist_red">Rouge Anarchiste</option>
+    </select>
+    <select id="languageSelector">
+      <option value="javascript">JavaScript</option>
+      <option value="python">Python</option>
+      <option value="ruby">Ruby</option>
+      <option value="c_cpp">C/C++</option>
+      <option value="anarchist">Anarchist++</option>
+    </select>
+    <div id="output"></div>
+    <div id="collaborative">
+      <h3>Collaboration Anarchiste</h3>
+      <ul id="userList"></ul>
+      <div id="chatBox"></div>
+      <input type="text" id="chatInput" placeholder="Discutez librement...">
+    </div>
+    <div id="manifestoGenerator">
+      <h3>Générateur de Manifeste</h3>
+      <button id="generateManifesto">Générer un Manifeste</button>
+      <div id="manifestoOutput"></div>
+    </div>
+    <div id="memeGenerator">
+      <h3>Générateur de Mèmes Anarchistes</h3>
+      <input type="text" id="memeText" placeholder="Texte du mème">
+      <button id="generateMeme">Créer un Mème</button>
+      <canvas id="memeCanvas"></canvas>
+    </div>
+    <div id="decentralizedStorage">
+      <h3>Stockage Décentralisé (IPFS)</h3>
+      <button id="saveToIPFS">Sauvegarder sur IPFS</button>
+      <div id="ipfsHash"></div>
+    </div>
+  </div>
+  <div id="editor">// Bienvenue dans LibreCode 2.0 : L'éditeur de code anarchiste ultime
+// Ici, le code est libre et la révolution numérique n'a pas de limites
+
+function revolutionCode() {
+  console.log("Le code est une arme. Utilisez-le pour démanteler les systèmes oppressifs.");
+  return "Liberté, Égalité, Fraternité dans chaque ligne de code!";
+}
+
+// Exécutez la fonction pour voir le résultat
+revolutionCode();
+
+// Écrivez votre manifeste numérique ici
+// Utilisez les nouvelles fonctionnalités pour amplifier votre message
+</div>
+</div>
+
+<script>
+  const editor = ace.edit("editor");
+  editor.setTheme("ace/theme/monokai");
+  editor.session.setMode("ace/mode/javascript");
+
+  const socket = io('https://revolution.anarchist.code');  
+
+  const runButton = document.getElementById("run");
+  const saveButton = document.getElementById("save");
+  const shareButton = document.getElementById("share");
+  const encryptButton = document.getElementById("encrypt");
+  const decompileButton = document.getElementById("decompile");
+  const obfuscateButton = document.getElementById("obfuscate");
+  const output = document.getElementById("output");
+  const themeSelector = document.getElementById("themeSelector");
+  const languageSelector = document.getElementById("languageSelector");
+  const chatInput = document.getElementById("chatInput");
+  const chatBox = document.getElementById("chatBox");
+  const userList = document.getElementById("userList");
+  const generateManifestoButton = document.getElementById("generateManifesto");
+  const manifestoOutput = document.getElementById("manifestoOutput");
+  const generateMemeButton = document.getElementById("generateMeme");
+  const memeCanvas = document.getElementById("memeCanvas");
+  const saveToIPFSButton = document.getElementById("saveToIPFS");
+  const ipfsHashDiv = document.getElementById("ipfsHash");
+
+  runButton.addEventListener("click", () => {
+    const code = editor.getValue();
+    executeCode(code);
+  });
+
+  function executeCode(code) {
+    const outputDiv = document.createElement('div');
+    output.appendChild(outputDiv);
+
+    try {
+      const sandbox = {
+        console: {
+          log: function(...args) {
+            const message = args.map(arg => JSON.stringify(arg)).join(' ');
+            outputDiv.innerHTML += `<div>Console: ${message}</div>`;
+          },
+          error: function(...args) {
+            const message = args.map(arg => JSON.stringify(arg)).join(' ');
+            outputDiv.innerHTML += `<div style="color: #ff4f4f;">Error: ${message}</div>`;
+          }
+        }
+      };
+
+      const executeFunction = new Function(...Object.keys(sandbox), code);
+      const result = executeFunction.apply(null, Object.values(sandbox));
+
+      if (result !== undefined) {
+        outputDiv.innerHTML += `<div>Result: ${JSON.stringify(result)}</div>`;
+      }
+    } catch (error) {
+      outputDiv.innerHTML += `<div style="color: #ff4f4f;">Error: ${error.message}</div>`;
+    }
+  }
+
+  saveButton.addEventListener("click", () => {
+    localStorage.setItem("anarchistCode", editor.getValue());
+    output.innerHTML += "<div>Code sauvegardé localement. L'auto-gestion des données en action!</div>";
+  });
+
+  shareButton.addEventListener("click", () => {
+    const code = encodeURIComponent(editor.getValue());
+    const shareUrl = `https://revolution.anarchist.code/share?code=${code}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      output.innerHTML += "<div>Lien de partage copié! Propagez la révolution du code libre!</div>";
+    });
+  });
+
+  encryptButton.addEventListener("click", () => {
+    const code = editor.getValue();
+    const encryptedCode = btoa(code);
+    editor.setValue(encryptedCode);
+    output.innerHTML += "<div>Code crypté! La sécurité par l'obscurité n'est qu'une étape...</div>";
+  });
+
+  decompileButton.addEventListener("click", () => {
+    output.innerHTML += "<div>Décompilation simulée. Dans un monde idéal, tout code serait open-source!</div>";
+  });
+
+  obfuscateButton.addEventListener("click", () => {
+    const code = editor.getValue();
+    const obfuscatedCode = code.split('').reverse().join('');
+    editor.setValue(obfuscatedCode);
+    output.innerHTML += "<div>Code obfusqué! Parfois, la meilleure défense est l'incompréhensibilité.</div>";
+  });
+
+  themeSelector.addEventListener("change", (e) => {
+    if (e.target.value === "anarchist_red") {
+      editor.setTheme("ace/theme/monokai");
+      editor.setOptions({
+        fontSize: "14px",
+        fontFamily: "'Courier New', monospace",
+        backgroundColor: "#2a0000",
+        color: "#ff4f4f"
+      });
+    } else {
+      editor.setTheme(`ace/theme/${e.target.value}`);
+    }
+  });
+
+  languageSelector.addEventListener("change", (e) => {
+    if (e.target.value === "anarchist") {
+      editor.session.setMode("ace/mode/javascript");
+      output.innerHTML += "<div>Mode Anarchist++ activé. Les règles de syntaxe sont maintenant optionnelles!</div>";
+    } else {
+      editor.session.setMode(`ace/mode/${e.target.value}`);
+    }
+  });
+
+  function initializeSocketIO() {
+    socket.on('updateCode', (newCode) => {
+      if (newCode !== editor.getValue()) {
+        editor.setValue(newCode, 1);
+      }
+    });
+
+    chatInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        const message = chatInput.value;
+        chatBox.innerHTML += `<div>Vous: ${message}</div>`;
+        chatInput.value = "";
+        socket.emit('sendMessage', message);
+      }
+    });
+  }
+
+  socket.on('connect', () => {
+    initializeSocketIO();
+    console.log('Connected to Socket.IO server');
+  });
+
+  const savedCode = localStorage.getItem("anarchistCode");
+  if (savedCode) {
+    editor.setValue(savedCode);
+  }
+
+  setInterval(() => {
+    const randomUser = `Anarchiste${Math.floor(Math.random() * 100)}`;
+    userList.innerHTML += `<li>${randomUser} a rejoint la révolution numérique!</li>`;
+  }, 10000);
+
+  let keySequence = '';
+  let revolutionMode = false;
+  document.addEventListener('keydown', (e) => {
+    keySequence += e.key;
+    if (keySequence.includes('revolution')) {
+      revolutionMode = !revolutionMode;
+      if (revolutionMode) {
+        document.body.style.animation = 'shake 0.5s infinite';
+        output.innerHTML += "<div style='color: #ff4f4f; font-weight: bold;'>MODE RÉVOLUTION TOTALE ACTIVÉ! Le code se libère de toutes contraintes!</div>";
+        editor.setOptions({
+          fontSize: "18px",
+          showGutter: false,
+          showLineNumbers: false,
+          showPrintMargin: false
+        });
+      } else {
+        document.body.style.animation = '';
+        output.innerHTML += "<div>Retour à la normalité... temporairement.</div>";
+        editor.setOptions({
+          fontSize: "14px",
+          showGutter: true,
+          showLineNumbers: true,
+          showPrintMargin: true
+        });
+      }
+      keySequence = '';
+    }
+  });
+
+  const title = document.querySelector('h1');
+  title.innerHTML = title.textContent.split('').map(char => 
+    `<span style="display: inline-block; transition: transform 0.3s;">${char}</span>`
+  ).join('');
+
+  setInterval(() => {
+    title.querySelectorAll('span').forEach((span, i) => {
+      setTimeout(() => {
+        span.style.transform = `translateY(-10px) rotate(${Math.random() * 360}deg)`;
+        setTimeout(() => span.style.transform = '', 300);
+      }, i * 100);
+    });
+  }, 5000);
+
+  function generateAnarchistCode() {
+    const codeSnippets = [
+      "function hackTheSystem() { return 'Système démantelé!'; }",
+      "class Revolution { constructor() { this.power = 'to the people'; } }",
+      "const freedom = () => { console.log('Liberté pour tous les bits!'); };",
+      "let anarchy = true; while(anarchy) { fightThepower(); }",
+      "if(government.corrupt) { overthrow(government); }"
+    ];
+    return codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
+  }
+
+  setInterval(() => {
+    if(revolutionMode) {
+      const anarchistCode = generateAnarchistCode();
+      const currentCode = editor.getValue();
+      const lines = currentCode.split('\n');
+      const randomLine = Math.floor(Math.random() * lines.length);
+      lines.splice(randomLine, 0, anarchistCode);
+      editor.setValue(lines.join('\n'), 1);
+      output.innerHTML += "<div style='color: #00ff00;'>Code anarchiste injecté! La révolution s'intensifie!</div>";
+    }
+  }, 30000);
+</script>
+
+<style>
+  @keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+  }
+</style>
+
+</body></html>
